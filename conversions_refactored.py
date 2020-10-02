@@ -1,6 +1,4 @@
 import unittest
-import argparse
-import sys
 from fractions import Fraction
 
 """
@@ -25,6 +23,9 @@ class CustomExceptions:
         pass
 
     class ConversionNotPossibleException(ValueError):
+        pass
+
+    class ConversionUnitInvalidError(ValueError):
         pass
 
 
@@ -111,6 +112,15 @@ class KnownValues(unittest.TestCase):
 
 
 class InvalidIO(unittest.TestCase):
+
+    def test_valid_measurement_category(self):
+        """raises an ConversionUnitInvalidErrorgit if toUnit or fromUnit are not a valid unit type"""
+        self.assertRaises(CustomExceptions.ConversionUnitInvalidError, convert, 'Yards', 'Cats', 2.0)
+
+    def test_valid_measurement_types(self):
+        """raises an ConversionNotPossibleException if inappropriate inputs are put together"""
+        self.assertRaises(CustomExceptions.ConversionNotPossibleException, convert, 'Meters', 'Celsius', 2.0)
+
     def test_kelvin_input_negative(self):
         """raises an error if Kelvin input is negative"""
         test_function = convertKelvinToCelsius, convertKelvinToFahrenheit
@@ -131,17 +141,11 @@ class InvalidIO(unittest.TestCase):
             self.assertRaises(CustomExceptions.InvalidTypeException, i, None)
 
     def test_invalid_input(self):
+        "raises is invalid type is put in"
         test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
                         convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
             self.assertRaises(CustomExceptions.InvalidTypeException, i, 'g')
-
-    length_units = ('Miles', 'Yards', 'Meters')
-    temperature_units = ('Kelvin', 'Celsius', 'Fahrenheit')
-
-
-class InvalidArgs(unittest.TestCase):
-    pass
 
 
 def errorCheck(n):
@@ -151,31 +155,27 @@ def errorCheck(n):
         raise CustomExceptions.InvalidTypeException('Cannot be None')
 
 
-class InvalidArgparse(unittest.TestCase):
-    """Tests that the parseargs class works correctly"""
-
-    def cmdParser(self):
-        self.parser = argparse.ArgumentParser(description='Convert from one var to another.')
-        self.parser.add_argument('--varinput', metavar='i', type=str,
-                            help='Sets input variable unit of measurement. Choose ('
-                                 'M)iles, (Y)ards, (M)eters, (K)elvin, (C)elsius, '
-                                 '(F)ahrenheit')
-        self.parser.add_argument('--varoutput', metavar='i', type=str,
-                            help='Sets output variable unit of measurement. Choose ('
-                                 'M)iles, (Y)ards, (M)eters, (K)elvin, (C)elsius, '
-                                 '(F)ahrenheit')
-        self.parser.add_argument('--amount', metavar='i', type=str, help='choose the amount you are going to convert')
-
-    def test_input_unknown(self):
-        """ Try to perform option that is not correct """
-        args = ['--varinput', 12345]
-        with self.assertRaises(SystemExit):
-            self.parser.parse_args(args)
-
-
 def convert(fromUnit=str(), toUnit=str(), value=float()):
-    length_units = ('Miles', 'Yards', 'Meters')
-    temperature_units = ('Kelvin', 'Celsius', 'Fahrenheit')
+    units = ('Miles', 'Yards', 'Meters', 'Kelvin', 'Celsius', 'Fahrenheit')
+
+    if fromUnit in units:
+        pass
+    else:
+        raise CustomExceptions.ConversionUnitInvalidError('{} is not part of list'.format(fromUnit))
+
+    if toUnit not in units:
+        raise CustomExceptions.ConversionUnitInvalidError('{} is not part of list'.format(toUnit))
+
+    unit1 = units[0:2]
+    unit2 = units[3:5]
+
+    check1, check2 = units.index(toUnit), units.index(fromUnit)
+    if check1 and check2 not in unit1:
+        if check1 and check2 not in unit2:
+            raise CustomExceptions.ConversionNotPossibleException()
+
+
+#convert('Miles', 'Dogfood', 5.0)
 
 
 def convertCelsiusToFahrenheit(n):
@@ -231,3 +231,4 @@ def convertKelvinToCelsius(n):
 
 if __name__ == '__main__':
     unittest.main()
+
