@@ -13,10 +13,10 @@ rules:
 
 
 class ModuleErrors:
-    class OutOfRangeError(ValueError):
+    class OutOfRangeException(ValueError):
         pass
 
-    class InvalidTypeError(ValueError):
+    class InvalidTypeException(ValueError):
         pass
 
 
@@ -86,13 +86,13 @@ class ConvertKelvinNegative(unittest.TestCase):
         """raises an error if Kelvin input is negative"""
         test_function = convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
-            self.assertRaises(ModuleErrors.OutOfRangeError, i, -5.0)
+            self.assertRaises(ModuleErrors.OutOfRangeException, i, -5.0)
 
     def test_kelvin_output_negative(self):
         """raises an error if Kelvin output is negative"""
         test_function = convertCelsiusToKelvin, convertFahrenheitToKelvin
         for i in test_function:
-            self.assertRaises(ModuleErrors.OutOfRangeError, i, -1000000.0)
+            self.assertRaises(ModuleErrors.OutOfRangeException, i, -1000000.0)
 
 
 class InvalidTypeInput(unittest.TestCase):
@@ -101,28 +101,28 @@ class InvalidTypeInput(unittest.TestCase):
         test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
                         convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
-            self.assertRaises(ModuleErrors.InvalidTypeError, i, None)
+            self.assertRaises(ModuleErrors.InvalidTypeException, i, None)
 
     def test_invalid_input(self):
         test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
                         convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
-            self.assertRaises(ModuleErrors.InvalidTypeError, i, 'g')
+            self.assertRaises(ModuleErrors.InvalidTypeException, i, 'g')
 
 
 # TODO: getting InvalidTypeError for valid types. need to investigate
 def errorCheck(n):
     if not isinstance(n, float):
-        raise ModuleErrors.InvalidTypeError('{} is a {}, it must be a float'.format(n, type(n)))
+        raise ModuleErrors.InvalidTypeException('{} is a {}, it must be a float'.format(n, type(n)))
     if n is None:
-        raise ModuleErrors.InvalidTypeError('Cannot be None')
+        raise ModuleErrors.InvalidTypeException('Cannot be None')
 
 
 def convertKelvinToCelsius(n):
     """convert Kelvin to Celsius"""
     errorCheck(n)
     if n <= -1:
-        raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
+        raise ModuleErrors.OutOfRangeException('Kelvin cannot be negative')
     else:
         return round(n - float(273.15), 2)
 
@@ -132,7 +132,7 @@ def convertCelsiusToKelvin(n):
     errorCheck(n)
     n = round(n + float(273.15), 2)
     if n <= -1:
-        raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
+        raise ModuleErrors.OutOfRangeException('Kelvin cannot be negative')
     else:
         return n
 
@@ -142,7 +142,7 @@ def convertKelvinToFahrenheit(n):
     errorCheck(n)
 
     if n <= -1:
-        raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
+        raise ModuleErrors.OutOfRangeException('Kelvin cannot be negative')
 
     return round(n * Fraction(9, 5) - float(459.67), 2)
 
@@ -152,7 +152,7 @@ def convertFahrenheitToKelvin(n):
     errorCheck(n)
     round(n + float(459.67) * Fraction(9, 5), 2)
     if n <= -1:
-        raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
+        raise ModuleErrors.OutOfRangeException('Kelvin cannot be negative')
     else:
         return n
 
