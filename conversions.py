@@ -17,7 +17,7 @@ class ModuleErrors:
         pass
 
     class InvalidTypeError(ValueError):
-        print('Invalid type input, Must be a float')
+        pass
 
 
 class KnownValues(unittest.TestCase):
@@ -25,16 +25,16 @@ class KnownValues(unittest.TestCase):
         (0.00, -273.15),
         (15.00, -258.15),
         (30.05, -243.1),
-        (300, 26.85),
-        (450, 176.85)
+        (300.00, 26.85),
+        (450.00, 176.85)
     )
 
     k_to_f_known_values = (
         (0.00, -459.67),
-        (15, -432.67),
+        (15.00, -432.67),
         (30.05, -405.58),
-        (300, 80.33),
-        (450, 350.33),
+        (300.00, 80.33),
+        (450.00, 350.33)
     )
 
     f_to_c_known_values = (
@@ -86,47 +86,41 @@ class ConvertKelvinNegative(unittest.TestCase):
         """raises an error if Kelvin input is negative"""
         test_function = convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
-            self.assertRaises(ModuleErrors.OutOfRangeError, i, -5)
+            self.assertRaises(ModuleErrors.OutOfRangeError, i, -5.0)
 
     def test_kelvin_output_negative(self):
         """raises an error if Kelvin output is negative"""
         test_function = convertCelsiusToKelvin, convertFahrenheitToKelvin
         for i in test_function:
-            self.assertRaises(ModuleErrors.OutOfRangeError, i, -1000000)
+            self.assertRaises(ModuleErrors.OutOfRangeError, i, -1000000.0)
 
 
 class InvalidTypeInput(unittest.TestCase):
-    """raises an error if input is not a float"""
-
-
-# TODO:need to verify that None or wrong types are being caught
-"""    def test_invalid_input(self):
+    def test_None_input(self):
+        """raises an error if input is not a float"""
         test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
                         convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
-            g = None
-            i(g)
-            self.assertIsNone(g)
-"""
-"""    def test_blank_input(self):
+            self.assertRaises(ModuleErrors.InvalidTypeError, i, None)
+
+    def test_invalid_input(self):
         test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
                         convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
-            g = i('g')
-            self.assertIsInstance(g, float)"""
+            self.assertRaises(ModuleErrors.InvalidTypeError, i, 'g')
 
 
 # TODO: getting InvalidTypeError for valid types. need to investigate
 def errorCheck(n):
     if not isinstance(n, float):
-        raise ModuleErrors.InvalidTypeError('Must be a float')
+        raise ModuleErrors.InvalidTypeError('{} is a {}, it must be a float'.format(n, type(n)))
     if n is None:
         raise ModuleErrors.InvalidTypeError('Cannot be None')
 
 
 def convertKelvinToCelsius(n):
-    errorCheck(n)
     """convert Kelvin to Celsius"""
+    errorCheck(n)
     if n <= -1:
         raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
     else:
@@ -135,6 +129,7 @@ def convertKelvinToCelsius(n):
 
 def convertCelsiusToKelvin(n):
     """convert Celsius to Kelvin"""
+    errorCheck(n)
     n = round(n + float(273.15), 2)
     if n <= -1:
         raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
@@ -144,6 +139,7 @@ def convertCelsiusToKelvin(n):
 
 def convertKelvinToFahrenheit(n):
     """convert Kelvin to Fahrenheit"""
+    errorCheck(n)
 
     if n <= -1:
         raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
@@ -153,6 +149,7 @@ def convertKelvinToFahrenheit(n):
 
 def convertFahrenheitToKelvin(n):
     """convert Fahrenheit to Kelvin"""
+    errorCheck(n)
     round(n + float(459.67) * Fraction(9, 5), 2)
     if n <= -1:
         raise ModuleErrors.OutOfRangeError('Kelvin cannot be negative')
@@ -162,11 +159,13 @@ def convertFahrenheitToKelvin(n):
 
 def convertFahrenheitToCelsius(n):
     """Convert Fahrenheit to Celsius"""
+    errorCheck(n)
     return round((n - 32) * Fraction(5, 9), 2)
 
 
 def convertCelsiusToFahrenheit(n):
     """convert Celsius to Fahrenheit"""
+    errorCheck(n)
     return round(n * Fraction(5, 9) + 32, 2)
 
 
