@@ -74,6 +74,41 @@ class KnownValues(unittest.TestCase):
         (10.0, 10.9361)
     )
 
+    def test_kelvin_celsius_table(self, forwards=True):
+        """if true will give known result with known input, if false will give known give in backwards order"""
+        if forwards:
+            for kelvin, celsius in self.k_to_c_known_values:
+                result = convertKelvinToCelsius(kelvin)
+                self.assertEqual(celsius, result)
+        else:
+            for kelvin, celsius in self.k_to_c_known_values:
+                result = convertCelsiusToKelvin(celsius)
+                self.assertEqual(kelvin, result)
+
+    def test_kelvin_fahrenheit_table(self, forwards=True):
+        """if true will give known result with known input, if false will give known give in backwards order"""
+        if forwards:
+            for kelvin, fahrenheit in self.k_to_f_known_values:
+                result = convertKelvinToFahrenheit(kelvin)
+                self.assertEqual(fahrenheit, result)
+        else:
+            for kelvin, fahrenheit in self.k_to_f_known_values:
+                result = convertFahrenheitToKelvin(fahrenheit)
+                self.assertEqual(kelvin, result)
+
+    def test_fahrenheit_celsius_table(self, forwards=True):
+        """if true will give known result with known input, if false will give known give in backwards order"""
+        if forwards:
+            for fahrenheit, celsius in self.f_to_c_known_values:
+                result = convertFahrenheitToCelsius(fahrenheit)
+                self.assertEqual(celsius, result)
+        else:
+            for fahrenheit, celsius in self.f_to_c_known_values:
+                result = convertCelsiusToFahrenheit(celsius)
+                self.assertEqual(fahrenheit, result)
+
+
+class InvalidIO(unittest.TestCase):
     def test_kelvin_input_negative(self):
         """raises an error if Kelvin input is negative"""
         test_function = convertKelvinToCelsius, convertKelvinToFahrenheit
@@ -103,16 +138,11 @@ class KnownValues(unittest.TestCase):
     temperature_units = ('Kelvin', 'Celsius', 'Fahrenheit')
 
 
-class ConvertTemps:
-    def errorCheck(n):
-        if not isinstance(n, float):
-            raise CustomExceptions.InvalidTypeException('{} is a {}, it must be a float'.format(n, type(n)))
-        if n is None:
-            raise CustomExceptions.InvalidTypeException('Cannot be None')
-
-
-if __name__ == '__main__':
-    unittest.main()
+def errorCheck(n):
+    if not isinstance(n, float):
+        raise CustomExceptions.InvalidTypeException('{} is a {}, it must be a float'.format(n, type(n)))
+    if n is None:
+        raise CustomExceptions.InvalidTypeException('Cannot be None')
 
 
 def convert(fromUnit=str, toUnit=str, value=float):
@@ -122,19 +152,19 @@ def convert(fromUnit=str, toUnit=str, value=float):
 
 def convertCelsiusToFahrenheit(n):
     """convert Celsius to Fahrenheit"""
-    ConvertTemps.errorCheck(n)
+    errorCheck(n)
     return round(n * Fraction(5, 9) + 32, 2)
 
 
 def convertFahrenheitToCelsius(n):
     """Convert Fahrenheit to Celsius"""
-    ConvertTemps.errorCheck(n)
+    errorCheck(n)
     return round((n - 32) * Fraction(5, 9), 2)
 
 
 def convertFahrenheitToKelvin(n):
     """convert Fahrenheit to Kelvin"""
-    ConvertTemps.errorCheck(n)
+    errorCheck(n)
     round(n + float(459.67) * Fraction(9, 5), 2)
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
@@ -144,7 +174,7 @@ def convertFahrenheitToKelvin(n):
 
 def convertKelvinToFahrenheit(n):
     """convert Kelvin to Fahrenheit"""
-    ConvertTemps.errorCheck(n)
+    errorCheck(n)
 
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
@@ -154,7 +184,7 @@ def convertKelvinToFahrenheit(n):
 
 def convertCelsiusToKelvin(n):
     """convert Celsius to Kelvin"""
-    ConvertTemps.errorCheck(n)
+    errorCheck(n)
     n = round(n + float(273.15), 2)
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
@@ -164,12 +194,11 @@ def convertCelsiusToKelvin(n):
 
 def convertKelvinToCelsius(n):
     """convert Kelvin to Celsius"""
-    ConvertTemps.errorCheck(n)
+    errorCheck(n)
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
     else:
         return round(n - float(273.15), 2)
-
 
 
 if __name__ == '__main__':
