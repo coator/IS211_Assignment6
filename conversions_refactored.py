@@ -115,11 +115,11 @@ class InvalidIO(unittest.TestCase):
 
     def test_valid_measurement_category(self):
         """raises an ConversionUnitInvalidErrorgit if toUnit or fromUnit are not a valid unit type"""
-        self.assertRaises(CustomExceptions.ConversionUnitInvalidError, convert, 'Yards', 'Cats', 2.0)
+        self.assertRaises(CustomExceptions.ConversionUnitInvalidError, convert, 'yards', 'cats', 2.0)
 
     def test_valid_measurement_types(self):
         """raises an ConversionNotPossibleException if inappropriate inputs are put together"""
-        self.assertRaises(CustomExceptions.ConversionNotPossibleException, convert, 'Meters', 'Celsius', 2.0)
+        self.assertRaises(CustomExceptions.ConversionNotPossibleException, convert, 'meters', 'celsius', 2.0)
 
     def test_kelvin_input_negative(self):
         """raises an error if Kelvin input is negative"""
@@ -156,7 +156,9 @@ def errorCheck(n):
 
 
 def convert(fromUnit=str(), toUnit=str(), value=float()):
-    units = ('Miles', 'Yards', 'Meters', 'Kelvin', 'Celsius', 'Fahrenheit')
+    units = ('miles', 'yards', 'meters', 'kelvin', 'celsius', 'fahrenheit')
+    converttypes = convertCelsiusToKelvin, convertKelvinToCelsius, convertFahrenheitToKelvin, convertKelvinToFahrenheit, \
+                   convertFahrenheitToCelsius, convertCelsiusToFahrenheit
 
     if fromUnit in units:
         pass
@@ -166,16 +168,18 @@ def convert(fromUnit=str(), toUnit=str(), value=float()):
     if toUnit not in units:
         raise CustomExceptions.ConversionUnitInvalidError('{} is not part of list'.format(toUnit))
 
-    unit1 = units[0:2]
-    unit2 = units[3:5]
+    unit1 = units[0:3]
+    unit2 = units[3:6]
 
-    check1, check2 = units.index(toUnit), units.index(fromUnit)
-    if check1 and check2 not in unit1:
-        if check1 and check2 not in unit2:
+    if toUnit and fromUnit not in unit1:
+        if toUnit and fromUnit not in unit2:
             raise CustomExceptions.ConversionNotPossibleException()
 
-
-#convert('Miles', 'Dogfood', 5.0)
+    convert = ('convert' + toUnit.capitalize() + 'To' + fromUnit.capitalize())
+    for fn in converttypes:
+        if convert == fn.__name__:
+            g = fn(value)
+            print(g)
 
 
 def convertCelsiusToFahrenheit(n):
@@ -228,7 +232,28 @@ def convertKelvinToCelsius(n):
     else:
         return round(n - float(273.15), 2)
 
+def convertMilesToMeters(n):
+    pass
+def convertMetersToMiles(n):
+    pass
+def convertYardsToMeters(n):
+    pass
+def convertMetersToYards(n):
+    pass
+def convertYardsToMiles(n):
+    pass
+def convertMilesToYards(n):
+    pass
 
+"""
 if __name__ == '__main__':
     unittest.main()
 
+"""
+
+
+def main():
+    convert('fahrenheit', 'celsius', 1.0)
+
+
+main()
