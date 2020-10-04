@@ -47,38 +47,32 @@ class KnownValues(unittest.TestCase):
         (72.00, 22.22)
     )
 
-    def test_kelvin_celsius_table(self, forwards=True):
+    def test_kelvin_celsius_table(self):
         """if true will give known result with known input, if false will give known give in backwards order"""
-        if forwards:
-            for kelvin, celsius in self.k_to_c_known_values:
-                result = convertKelvinToCelsius(kelvin)
-                self.assertEqual(celsius, result)
-        else:
-            for kelvin, celsius in self.k_to_c_known_values:
-                result = convertCelsiusToKelvin(celsius)
-                self.assertEqual(kelvin, result)
+        for kelvin, celsius in self.k_to_c_known_values:
+            result = convertKelvinToCelsius(kelvin)
+            self.assertEqual(celsius, result)
+        for kelvin, celsius in self.k_to_c_known_values:
+            result = convertCelsiusToKelvin(celsius)
+            self.assertEqual(kelvin, result)
 
-    def test_kelvin_fahrenheit_table(self, forwards=True):
+    def test_kelvin_fahrenheit_table(self):
         """if true will give known result with known input, if false will give known give in backwards order"""
-        if forwards:
-            for kelvin, fahrenheit in self.k_to_f_known_values:
-                result = convertKelvinToFahrenheit(kelvin)
-                self.assertEqual(fahrenheit, result)
-        else:
-            for kelvin, fahrenheit in self.k_to_f_known_values:
-                result = convertFahrenheitToKelvin(fahrenheit)
-                self.assertEqual(kelvin, result)
+        for kelvin, fahrenheit in self.k_to_f_known_values:
+            result = convertKelvinToFahrenheit(kelvin)
+            self.assertEqual(fahrenheit, result)
+        for kelvin, fahrenheit in self.k_to_f_known_values:
+            result = convertFahrenheitToKelvin(fahrenheit)
+            self.assertEqual(kelvin, result)
 
-    def test_fahrenheit_celsius_table(self, forwards=True):
+    def test_fahrenheit_celsius_table(self):
         """if true will give known result with known input, if false will give known give in backwards order"""
-        if forwards:
-            for fahrenheit, celsius in self.f_to_c_known_values:
-                result = convertFahrenheitToCelsius(fahrenheit)
-                self.assertEqual(celsius, result)
-        else:
-            for fahrenheit, celsius in self.f_to_c_known_values:
-                result = convertCelsiusToFahrenheit(celsius)
-                self.assertEqual(fahrenheit, result)
+        for fahrenheit, celsius in self.f_to_c_known_values:
+            result = convertFahrenheitToCelsius(fahrenheit)
+            self.assertEqual(celsius, result)
+        for fahrenheit, celsius in self.f_to_c_known_values:
+            result = convertCelsiusToFahrenheit(celsius)
+            self.assertEqual(fahrenheit, result)
 
 
 class ConvertKelvinNegative(unittest.TestCase):
@@ -149,12 +143,11 @@ def convertKelvinToFahrenheit(n):
 
 def convertFahrenheitToKelvin(n):
     """convert Fahrenheit to Kelvin"""
-    errorCheck(n)
-    round(n + float(459.67) * Fraction(9, 5), 2)
-    if n <= -1:
-        raise ModuleErrors.OutOfRangeException('Kelvin cannot be negative')
+    nn = round((n +459.67)* Fraction(5,9), 2)
+    if nn <= -1:
+        raise ModuleErrors.OutOfRangeException('Kelvin cannot be negative, {} is showing negative'.format(nn))
     else:
-        return n
+        return nn
 
 
 def convertFahrenheitToCelsius(n):
@@ -166,7 +159,7 @@ def convertFahrenheitToCelsius(n):
 def convertCelsiusToFahrenheit(n):
     """convert Celsius to Fahrenheit"""
     errorCheck(n)
-    return round(n * Fraction(5, 9) + 32, 2)
+    return round(n * Fraction(9, 5) + 32, 2)
 
 
 if __name__ == '__main__':

@@ -22,6 +22,9 @@ class CustomExceptions:
     class InvalidTypeException(ValueError):
         pass
 
+    class NoneTypeException(ValueError):
+        pass
+
     class ConversionNotPossibleException(ValueError):
         pass
 
@@ -39,7 +42,7 @@ class KnownValues(unittest.TestCase):
     )
 
     k_to_f_known_values = (
-        (0.00, -459.67),
+        (1.00, -457.87),
         (15.00, -432.67),
         (30.05, -405.58),
         (300.00, 80.33),
@@ -67,54 +70,76 @@ class KnownValues(unittest.TestCase):
         (2.0, 3218.69),
         (3.0, 4828.03),
         (5.0, 8046.72),
-        (10.0, 16093.4)
+        (10.0, 16093.44)
     )
     me_to_y_known_values = (
-        (1.0, 1.09361),
-        (2.0, 2.18723),
-        (3.0, 3.28084),
-        (5.0, 5.46807),
-        (10.0, 10.9361)
+        (1.0, 1.09),
+        (2.0, 2.19),
+        (3.0, 3.28),
+        (5.0, 5.47),
+        (10.0, 10.94)
     )
 
-    def test_kelvin_celsius_table(self, forwards=True):
-        """if true will give known result with known input, if false will give known give in backwards order"""
-        if forwards:
-            for kelvin, celsius in self.k_to_c_known_values:
-                result = convertKelvinToCelsius(kelvin)
-                self.assertEqual(celsius, result)
-        else:
-            for kelvin, celsius in self.k_to_c_known_values:
-                result = convertCelsiusToKelvin(celsius)
-                self.assertEqual(kelvin, result)
+    def test_me_to_y_table(self):
+        """Tests all output numbers match result"""
+        for meters, yards in self.me_to_y_known_values:
+            result = convertMetersToYards(meters)
+            self.assertEqual(yards, result)
+        for meters, yards in self.me_to_y_known_values:
+            result = convertYardsToMeters(yards)
+            self.assertEqual(meters, result)
 
-    def test_kelvin_fahrenheit_table(self, forwards=True):
-        """if true will give known result with known input, if false will give known give in backwards order"""
-        if forwards:
-            for kelvin, fahrenheit in self.k_to_f_known_values:
-                result = convertKelvinToFahrenheit(kelvin)
-                self.assertEqual(fahrenheit, result)
-        else:
-            for kelvin, fahrenheit in self.k_to_f_known_values:
-                result = convertFahrenheitToKelvin(fahrenheit)
-                self.assertEqual(kelvin, result)
+    def test_mi_to_y_table(self):
+        """Tests all output numbers match result"""
+        for a, b in self.mi_to_y_known_values:
+            result = convertMilesToYards(a)
+            self.assertEqual(b, result)
+        for a, b in self.mi_to_y_known_values:
+            result = convertYardsToMiles(b)
+            self.assertEqual(a, result)
 
-    def test_fahrenheit_celsius_table(self, forwards=True):
-        """if true will give known result with known input, if false will give known give in backwards order"""
-        if forwards:
-            for fahrenheit, celsius in self.f_to_c_known_values:
-                result = convertFahrenheitToCelsius(fahrenheit)
-                self.assertEqual(celsius, result)
-        else:
-            for fahrenheit, celsius in self.f_to_c_known_values:
-                result = convertCelsiusToFahrenheit(celsius)
-                self.assertEqual(fahrenheit, result)
+    def test_mi_to_me_table(self):
+        """Tests all output numbers match result"""
+        for a, b in self.mi_to_me_known_values:
+            result = convertMilesToMeters(a)
+            self.assertEqual(b, result)
+        for a, b in self.mi_to_me_known_values:
+            result = convertMetersToMiles(b)
+            self.assertEqual(a, result)
+
+
+    def test_kelvin_celsius_table(self):
+        """Tests all output numbers match result"""
+        for kelvin, celsius in self.k_to_c_known_values:
+            result = convertKelvinToCelsius(kelvin)
+            self.assertEqual(celsius, result)
+        for kelvin, celsius in self.k_to_c_known_values:
+            result = convertCelsiusToKelvin(celsius)
+            self.assertEqual(kelvin, result)
+
+    def test_kelvin_fahrenheit_table(self):
+        """Tests all output numbers match result"""
+        for kelvin, fahrenheit in self.k_to_f_known_values:
+            result = convertKelvinToFahrenheit(kelvin)
+            self.assertEqual(fahrenheit, result)
+        for kelvin, fahrenheit in self.k_to_f_known_values:
+            result = convertFahrenheitToKelvin(fahrenheit)
+            self.assertEqual(kelvin, result)
+
+    def test_fahrenheit_celsius_table(self):
+        """Tests all output numbers match result"""
+        for fahrenheit, celsius in self.f_to_c_known_values:
+            result = convertFahrenheitToCelsius(fahrenheit)
+            self.assertEqual(celsius, result)
+        for fahrenheit, celsius in self.f_to_c_known_values:
+            result = convertCelsiusToFahrenheit(celsius)
+            self.assertEqual(fahrenheit, result)
 
 
 class InvalidIO(unittest.TestCase):
 
     def test_valid_measurement_category(self):
-        """raises an ConversionUnitInvalidErrorgit if toUnit or fromUnit are not a valid unit type"""
+        """raises an ConversionUnitInvalidError if toUnit or fromUnit are not a valid unit type"""
         self.assertRaises(CustomExceptions.ConversionUnitInvalidError, convert, 'yards', 'cats', 2.0)
 
     def test_valid_measurement_types(self):
@@ -122,91 +147,80 @@ class InvalidIO(unittest.TestCase):
         self.assertRaises(CustomExceptions.ConversionNotPossibleException, convert, 'meters', 'celsius', 2.0)
 
     def test_kelvin_input_negative(self):
-        """raises an error if Kelvin input is negative"""
+        """raises an error if convertKelvinToCelsius, convertKelvinToFahrenheit input is negative"""
         test_function = convertKelvinToCelsius, convertKelvinToFahrenheit
         for i in test_function:
             self.assertRaises(CustomExceptions.OutOfRangeException, i, -5.0)
 
     def test_kelvin_output_negative(self):
-        """raises an error if Kelvin output is negative"""
+        """raises an error if convertKelvinToCelsius, convertKelvinToFahrenheit is negative"""
         test_function = convertCelsiusToKelvin, convertFahrenheitToKelvin
         for i in test_function:
             self.assertRaises(CustomExceptions.OutOfRangeException, i, -1000000.0)
 
     def test_None_input(self):
-        """raises an error if input is not a float"""
-        test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
-                        convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
-        for i in test_function:
-            self.assertRaises(CustomExceptions.InvalidTypeException, i, None)
+        """raises an InvalidTypeException if input is None"""
+        self.assertRaises(CustomExceptions.NoneTypeException, convert, 'yards', 'miles', None)
 
     def test_invalid_input(self):
-        "raises is invalid type is put in"
-        test_function = convertCelsiusToKelvin, convertCelsiusToFahrenheit, convertFahrenheitToKelvin, \
-                        convertFahrenheitToCelsius, convertKelvinToCelsius, convertKelvinToFahrenheit
-        for i in test_function:
-            self.assertRaises(CustomExceptions.InvalidTypeException, i, 'g')
+        """raises TypeError exception if invalid type is put in"""
+        self.assertRaises(CustomExceptions.InvalidTypeException, convert, 'yards', 'miles', 'a very wrong value')
 
 
-def errorCheck(n):
-    if not isinstance(n, float):
-        raise CustomExceptions.InvalidTypeException('{} is a {}, it must be a float'.format(n, type(n)))
-    if n is None:
-        raise CustomExceptions.InvalidTypeException('Cannot be None')
+def errorCheck(fromUnit, toUnit, value, units):
+    def conversion_types(a, b):
+        if a in units and b in units:
+            pass
+        else:
+            if a not in units:
+                raise CustomExceptions.ConversionUnitInvalidError('{} is not part of valid conversions'.format(a))
+            else:
+                raise CustomExceptions.ConversionUnitInvalidError('{} is not part of valid conversions'.format(b))
+
+    conversion_types(fromUnit, toUnit)
+    if not all(x in units[0:3] for x in [fromUnit, toUnit]):
+        if not all(x in units[3:6] for x in [fromUnit, toUnit]):
+            raise CustomExceptions.ConversionNotPossibleException(
+                'Invalid Conversion types, cannot convert {} to {}'.format(fromUnit, toUnit))
+    if value is None:
+        raise CustomExceptions.NoneTypeException('Cannot be None')
+    if not isinstance(value, float):
+        raise CustomExceptions.InvalidTypeException('Must be a float')
 
 
 def convert(fromUnit=str(), toUnit=str(), value=float()):
     units = ('miles', 'yards', 'meters', 'kelvin', 'celsius', 'fahrenheit')
     converttypes = convertCelsiusToKelvin, convertKelvinToCelsius, convertFahrenheitToKelvin, convertKelvinToFahrenheit, \
-                   convertFahrenheitToCelsius, convertCelsiusToFahrenheit
-
-    if fromUnit in units:
-        pass
-    else:
-        raise CustomExceptions.ConversionUnitInvalidError('{} is not part of list'.format(fromUnit))
-
-    if toUnit not in units:
-        raise CustomExceptions.ConversionUnitInvalidError('{} is not part of list'.format(toUnit))
-
-    unit1 = units[0:3]
-    unit2 = units[3:6]
-
-    if toUnit and fromUnit not in unit1:
-        if toUnit and fromUnit not in unit2:
-            raise CustomExceptions.ConversionNotPossibleException()
-
-    convert = ('convert' + toUnit.capitalize() + 'To' + fromUnit.capitalize())
+                   convertFahrenheitToCelsius, convertCelsiusToFahrenheit, convertMetersToMiles, convertMilesToMeters, \
+                   convertYardsToMeters, convertMetersToYards, convertYardsToMiles, convertMilesToYards
+    errorCheck(fromUnit, toUnit, value, units)
+    value = float(value)
+    convert_namespace = ('convert' + toUnit.capitalize() + 'To' + fromUnit.capitalize())
     for fn in converttypes:
-        if convert == fn.__name__:
-            g = fn(value)
-            print(g)
+        if convert_namespace == fn.__name__:
+            print('converting {} to {}, results is {: f}'.format(fromUnit, toUnit, fn(value)))
 
 
 def convertCelsiusToFahrenheit(n):
-    """convert Celsius to Fahrenheit"""
-    errorCheck(n)
-    return round(n * Fraction(5, 9) + 32, 2)
+    """Convert Celsius to Fahrenheit"""
+    return round(n * Fraction(9, 5) + 32, 2)
 
 
 def convertFahrenheitToCelsius(n):
     """Convert Fahrenheit to Celsius"""
-    errorCheck(n)
     return round((n - 32) * Fraction(5, 9), 2)
 
 
 def convertFahrenheitToKelvin(n):
     """convert Fahrenheit to Kelvin"""
-    errorCheck(n)
-    round(n + float(459.67) * Fraction(9, 5), 2)
-    if n <= -1:
-        raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
+    nn = round((n +459.67)* Fraction(5,9), 2)
+    if nn <= -1:
+        raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative, {} is showing negative'.format(nn))
     else:
-        return n
-
+        return nn
 
 def convertKelvinToFahrenheit(n):
     """convert Kelvin to Fahrenheit"""
-    errorCheck(n)
 
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
@@ -216,7 +230,6 @@ def convertKelvinToFahrenheit(n):
 
 def convertCelsiusToKelvin(n):
     """convert Celsius to Kelvin"""
-    errorCheck(n)
     n = round(n + float(273.15), 2)
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
@@ -226,34 +239,58 @@ def convertCelsiusToKelvin(n):
 
 def convertKelvinToCelsius(n):
     """convert Kelvin to Celsius"""
-    errorCheck(n)
     if n <= -1:
         raise CustomExceptions.OutOfRangeException('Kelvin cannot be negative')
     else:
         return round(n - float(273.15), 2)
 
+
 def convertMilesToMeters(n):
-    pass
+    return round(n * 1609.344, 2)
+
+
 def convertMetersToMiles(n):
-    pass
+    return round(n / 1609.344, 2)
+
+
 def convertYardsToMeters(n):
-    pass
+    return round(n * 0.9144, 2)
+
+
 def convertMetersToYards(n):
-    pass
+    return round(n * 1.09361, 2)
+
+
 def convertYardsToMiles(n):
-    pass
+    return round(n * .000568182, 2)
+
+
 def convertMilesToYards(n):
-    pass
-
-"""
-if __name__ == '__main__':
-    unittest.main()
-
-"""
+    return round(n * 1760, 2)
 
 
 def main():
-    convert('fahrenheit', 'celsius', 1.0)
+    inputd = input('Type u for unittest or press enter to run... ')
+    if inputd == 'u':
+
+        if __name__ == '__main__':
+            unittest.main()
+
+    else:
+        while True:
+            inputa, inputb, inputc = '', '', 0.0
+            while len(inputa) == 0:
+                inputa = input("Please type unit converting from: ")
+                if inputa not in ('miles', 'yards', 'meters', 'kelvin', 'celsius', 'fahrenheit'):
+                    inputa = ''
+            while len(inputb) == 0:
+                inputb = input("Please type unit converting input too: ")
+                if inputa not in ('miles', 'yards', 'meters', 'kelvin', 'celsius', 'fahrenheit'):
+                    inputb = ''
+            while inputc == 0.0:
+                inputc = float(input("Please type in amount: "))
+            convert(inputa, inputb, inputc)
+            print('___________________________________________________')
 
 
 main()
